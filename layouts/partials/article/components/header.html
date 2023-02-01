@@ -1,4 +1,7 @@
 <header class="article-header">
+  {{- $isArticleView := .IsArticleView -}}
+  {{- $isListView := .IsListView -}}
+  {{- with .Context -}}
     {{- $image := partialCached "helper/image" (dict "Context" . "Type" "article") .RelPermalink "article" -}}
     {{ if $image.exists }}
         <div class="article-image">
@@ -22,6 +25,10 @@
                         {{ with $Srcset }}srcset="{{ . }}"{{ end }}
                         width="{{ $Width }}" 
                         height="{{ $Height }}" 
+                        {{ if (and $isArticleView .Params.image_position_article )}}style="object-position: {{ .Params.image_position_article }};"
+                        {{ else if (and $isListView .Params.image_position_list )}}style="object-position: {{ .Params.image_position_list }};"
+                        {{ else if .Params.image_position }}style="object-position: {{ .Params.image_position }};"
+                        {{ end -}}
                         loading="lazy"
                         alt="Featured image of post {{ .Title }}" />
                 {{ else }}
@@ -32,4 +39,5 @@
     {{ end }}
 
     {{ partialCached "article/components/details" . .RelPermalink }}
+  {{- end }}
 </header>
