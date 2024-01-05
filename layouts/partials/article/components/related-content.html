@@ -8,6 +8,11 @@
     <h2 class="section-title">{{ T "article.relatedContent" }}</h2>
     <div class="related-content">
         <div class="flex article-list--tile">
+            {{ if $.Site.Params.article.nextRelated }}
+                {{ with $.Next }}
+                    {{ partial "article-list/tile" (dict "context" . "size" (printf "250x150 %s" .Params.image_anchor) "Type" "articleList" "annotation" "Next:") }}
+                {{ end }}
+            {{ end }}
             {{ range . }}
                 {{ partial "article-list/tile" (dict "context" . "size" (printf "250x150 %s" .Params.image_anchor) "Type" "articleList") }}
             {{ end }}
