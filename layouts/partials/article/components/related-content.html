@@ -2,21 +2,29 @@
 {{ range .Params.related -}}
 {{ $explicitly_related = $explicitly_related | append ($.Site.GetPage . ) -}}
 {{ end -}}
-{{ $related := $explicitly_related | append (where (.Site.RegularPages.Related .) "Params.hidden" "!=" true) | uniq | first 5 }}
-{{ with $related }}
+{{ $related := $explicitly_related | append (where (.Site.RegularPages.Related .) "Params.hidden" "!=" true) | uniq | first 6 }}
+{{ $next := slice -}}
+{{ if (and ($.InSection ($.Site.GetPage "/post")) $.Site.Params.article.nextRelated $.Next) -}}
+{{ $next = slice $.Next -}}
+{{ $next_and_related := $next | append $related | uniq | first 6 -}}
+{{ $related = $next_and_related | after 1 -}}
+{{ else -}}
+{{ $related = $related | first 5 -}}
+{{ end -}}
+{{ if (or $next $related) -}}
+{{ with (dict "next" $next "related" $related) }}
 <aside class="related-content--wrapper">
     <h2 class="section-title">{{ T "article.relatedContent" }}</h2>
     <div class="related-content">
         <div class="flex article-list--tile">
-            {{ if $.Site.Params.article.nextRelated }}
-                {{ with $.Next }}
-                    {{ partial "article-list/tile" (dict "context" . "size" (printf "250x150 %s" .Params.image_anchor) "Type" "articleList" "annotation" "Next:") }}
-                {{ end }}
+            {{ range .next }}
+                {{ partial "article-list/tile" (dict "context" . "size" (printf "250x150 %s" .Params.image_anchor) "Type" "articleList" "annotation" "Next:") }}
             {{ end }}
-            {{ range . }}
+            {{ range .related }}
                 {{ partial "article-list/tile" (dict "context" . "size" (printf "250x150 %s" .Params.image_anchor) "Type" "articleList") }}
             {{ end }}
         </div>
     </div>
 </aside>
+{{ end -}}
 {{ end }}
