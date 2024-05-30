@@ -1,5 +1,7 @@
 <div class="article-details">
-    {{ if .Params.categories }}
+    {{ $isArticleView := .IsArticleView -}}
+    {{- with .Context }}
+    {{- if .Params.categories }}
     <header class="article-category">
         {{ range (.GetTerms "categories") }}
             <a href="{{ .RelPermalink }}" {{ with .Params.style }}style="background-color: {{ .background }}; color: {{ .color }};"{{ end }}>
@@ -22,6 +24,12 @@
         </h3>
         {{ end }}
     </div>
+
+    {{- if and $isArticleView .Site.Params.podcasts.enabled -}}
+      {{ with .Params.podcast }}
+{{ partial "article/components/podcast" . -}}
+      {{ end -}}
+    {{ end }}
 
     {{ $showReadingTime := .Params.readingTime | default (.Site.Params.article.readingTime) }}
     {{ $showDate := not .Date.IsZero }}
@@ -57,5 +65,6 @@
                 {{ end }}
             </div>
         </footer>
+    {{- end -}}
     {{ end }}
 </div>

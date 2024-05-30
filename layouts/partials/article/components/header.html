@@ -38,6 +38,6 @@
         </div>
     {{ end }}
 
-    {{ partialCached "article/components/details" . .RelPermalink }}
+    {{ partialCached "article/components/details" (dict "Context" . "IsArticleView" $isArticleView) .RelPermalink $isArticleView }}
   {{- end }}
 </header>
